@@ -1,7 +1,9 @@
 import pickle
 
+import django_rq
 from rest_framework import serializers
 
+from learnhtml_backend.classification import tasks
 from learnhtml_backend.classification.models import ClassificationJob, PageDownload, Classifier
 
 
@@ -16,10 +18,14 @@ class PageDetailSerializer(serializers.ModelSerializer):
 
 class PageListSerializer(serializers.ModelSerializer):
     """List serializer for pages. Does not include content"""
+    is_failed = serializers.SerializerMethodField()
+
+    def get_is_failed(self, obj):
+        return obj.content is None
 
     class Meta:
         model = PageDownload
-        fields = ('id', 'url', 'date_downloaded')
+        fields = ('id', 'url', 'is_failed', 'date_downloaded')
 
 
 class JobListSerializer(serializers.ModelSerializer):
@@ -47,6 +53,7 @@ class JobListSerializer(serializers.ModelSerializer):
         # create classification job with this
         job = ClassificationJob.objects.create(classifier_used=classifier_used,
                                                classified_page=page)
+        django_rq.enqueue(tasks.do_classification_job, job.id)
 
         # return the job
         return job
@@ -60,7 +67,7 @@ class JobListSerializer(serializers.ModelSerializer):
 class JobDetailSerializer(serializers.ModelSerializer):
     """Job serializer for details. Includes HTML results"""
     url = serializers.URLField(source='classified_page.url')
-    content = serializers.CharField(source='classified_page.content')
+    page_id = serializers.PrimaryKeyRelatedField(source='classified_page', read_only=True)
     results = serializers.SerializerMethodField()
 
     def get_results(self, obj):
@@ -68,7 +75,7 @@ class JobDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassificationJob
-        fields = ('id', 'url', 'content', 'results', 'is_failed',
+        fields = ('id', 'url', 'page_id', 'results', 'is_failed',
                   'date_started', 'date_ended')
 
 

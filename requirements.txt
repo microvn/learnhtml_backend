@@ -38,5 +38,12 @@ boto3==1.7.39
 # Workers
 django-rq==1.1.0
 
+# Web download
+git+https://github.com/zTrix/webpage2html@master#egg=webpage2html
+beautifulsoup4>=4.0.0
+lxml>=3.4.4
+requests>=2.5.2
+termcolor>=1.1.0
+
 # Personal libraries
-git+https://github.com/nikitautiu/learnhtml.git@master#egg=learnhtml
+-e git+https://github.com/nikitautiu/learnhtml.git@master#egg=learnhtml

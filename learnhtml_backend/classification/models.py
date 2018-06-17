@@ -11,7 +11,7 @@ class PageDownload(models.Model):
                            null=False, unique=True)
     content = models.TextField(help_text='Html content(if null it means it hasn\'t been downloaded yet',
                                blank=False, null=True)
-    date_downloaded = models.DateTimeField(help_text='Date created', auto_now_add=True, null=False)
+    date_downloaded = models.DateTimeField(help_text='Date created', auto_now=True, null=True)
 
 
 class Classifier(models.Model):
