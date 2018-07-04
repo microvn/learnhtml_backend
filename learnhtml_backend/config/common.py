@@ -21,6 +21,7 @@ class Common(Configuration):
         'rest_framework',  # utilities for rest apis
         'django_filters',  # for filtering rest endpoints
         'django_rq',  # queue
+        'corsheaders',
 
         # Your apps
         'learnhtml_backend.classification'
@@ -30,6 +31,7 @@ class Common(Configuration):
     MIDDLEWARE = (
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
+        'corsheaders.middleware.CorsMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -190,18 +192,22 @@ class Common(Configuration):
         'DEFAULT_PERMISSION_CLASSES': [
         ],
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.SessionAuthentication',
-            'rest_framework.authentication.TokenAuthentication',
-        )
+        ),
+
     }
 
     # Redis queue
     RQ_QUEUES = {
         'default': {
-            'HOST': 'localhost',
-            'PORT': 6379,
-            'DB': 0,
-            'PASSWORD': 'password',
             'DEFAULT_TIMEOUT': 360,
+            'URL': os.getenv('DJANGO_REDIS_QUEUE_URL',
+                             'redis://:password@localhost:6379/0')  # in case you're on Heroku
         }
     }
+
+    # CORS
+    CORS_ORIGIN_WHITELIST = (
+        '127.0.0.1:3000',
+        'localhost:3000'
+    )
+

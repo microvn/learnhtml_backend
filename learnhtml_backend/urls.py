@@ -10,8 +10,8 @@ from learnhtml_backend.classification.views import PageViewSet, ClassifierViewSe
 
 router = DefaultRouter()
 router.register('pages', viewset=PageViewSet)
-router.register('classifiers', viewset=ClassifierViewSet)
-router.register('jobs', viewset=JobViewSet)
+router.register('jobs', viewset=JobViewSet, base_name='jobs')
+router.register('classifiers', viewset=ClassifierViewSet, base_name='classifiers')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

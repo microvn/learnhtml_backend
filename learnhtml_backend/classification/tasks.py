@@ -4,11 +4,13 @@ import pickle
 
 import webpage2html
 from django.db import transaction
+from django.db.models import ExpressionWrapper, F, DurationField, Q
 from django.utils import timezone
 from django_rq import job
 from learnhtml.extractor import HTMLExtractor
 
 from learnhtml_backend.classification.models import ClassificationJob, ClassificationResult
+from learnhtml_backend.consts import CLASSIFY_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
@@ -59,3 +61,16 @@ def do_classification_job(classification_job_id):
         classification_job.is_failed = True
         classification_job.date_ended = timezone.now()
         classification_job.save()
+
+
+@job
+def do_clear_jobs():
+    """Sets all pending jobs that exceded a threshold to failed"""
+    # get teh filtered queryset - only pending jobs that haven't failed yet
+    queryset = ClassificationJob.objects.all()
+    queryset = queryset.annotate(elapsed_time=ExpressionWrapper(timezone.now() - F('date_started'),
+                                                                output_field=DurationField()))
+    queryset = queryset.filter(is_failed=False, date_ended__isnull=True, elapsed_time__gt=CLASSIFY_TIMEOUT)
+
+    # set to failed
+    queryset.update(is_failed=True)

@@ -3,7 +3,7 @@ pytz==2018.4
 Django==2.0.6
 django-configurations==2.0
 gunicorn==19.8.1
-newrelic==3.2.2.94
+django-cors-headers==2.2.0
 
 # For the persistence stores
 psycopg2-binary==2.7.4
@@ -37,6 +37,7 @@ boto3==1.7.39
 
 # Workers
 django-rq==1.1.0
+rq-scheduler==0.8.3
 
 # Web download
 git+https://github.com/zTrix/webpage2html@master#egg=webpage2html
@@ -47,3 +48,6 @@ termcolor>=1.1.0
 
 # Personal libraries
 -e git+https://github.com/nikitautiu/learnhtml.git@master#egg=learnhtml
+
+# CLI tools
+django-click==2.1.0

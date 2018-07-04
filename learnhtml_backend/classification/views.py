@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from django.db.models import Q, ExpressionWrapper, F, DurationField
 from django.utils import timezone
 from rest_framework import viewsets, mixins
@@ -8,8 +6,7 @@ from rest_framework.decorators import action
 from learnhtml_backend.classification.models import PageDownload, Classifier, ClassificationJob
 from learnhtml_backend.classification.serializers import PageListSerializer, PageDetailSerializer, ClassifierSerializer, \
     JobDetailSerializer, JobListSerializer
-
-CLASSIFY_TIMEOUT = timedelta(minutes=10)
+from learnhtml_backend.consts import CLASSIFY_TIMEOUT
 
 
 class PageViewSet(viewsets.ReadOnlyModelViewSet):
@@ -66,6 +63,9 @@ class JobViewSet(mixins.ListModelMixin,
             queryset = queryset.annotate(elapsed_time=ExpressionWrapper(timezone.now() - F('date_started'),
                                                                         output_field=DurationField()))
             queryset = queryset.filter(is_failed=False, date_ended__isnull=True, elapsed_time__lte=CLASSIFY_TIMEOUT)
+        if self.action == 'done':
+            # just the finished ones
+            queryset = queryset.filter(is_failed=False, date_ended__isnull=False)
 
         return queryset
 
@@ -78,4 +78,9 @@ class JobViewSet(mixins.ListModelMixin,
     @action(detail=False)
     def pending(self, request, *args, **kwargs):
         # the same as failed
+        return self.list(request, *args, **kwargs)
+
+    @action(detail=False)
+    def done(self, request, *args, **kwargs):
+        # again
         return self.list(request, *args, **kwargs)
