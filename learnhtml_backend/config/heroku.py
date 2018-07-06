@@ -1,5 +1,7 @@
 import os
 
+from configurations import values
+
 from learnhtml_backend.config.common import Common
 
 
@@ -17,3 +19,7 @@ class Heroku(Common):
             'DEFAULT_TIMEOUT': 600,
         },
     }
+
+    CORS_ORIGIN_WHITELIST = (
+        values.URLValue('*', environ_name='CORS_ORIGIN'),
+    )
