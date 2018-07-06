@@ -21,5 +21,5 @@ class Heroku(Common):
     }
 
     CORS_ORIGIN_WHITELIST = (
-        values.URLValue('*', environ_name='CORS_ORIGIN'),
+        values.URLValue('http://localhost:8000', environ_name='CORS_ORIGIN'),
     )
