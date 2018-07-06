@@ -67,7 +67,7 @@ class JobListSerializer(serializers.ModelSerializer):
 class JobDetailSerializer(serializers.ModelSerializer):
     """Job serializer for details. Includes HTML results"""
     url = serializers.URLField(source='classified_page.url')
-    page_id = serializers.PrimaryKeyRelatedField(source='classified_page', read_only=True)
+    page_id = serializers.IntegerField(source='classified_page.id', read_only=True)
     results = serializers.SerializerMethodField()
 
     def get_results(self, obj):
