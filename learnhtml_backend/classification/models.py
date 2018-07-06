@@ -13,12 +13,18 @@ class PageDownload(models.Model):
                                blank=False, null=True)
     date_downloaded = models.DateTimeField(help_text='Date created', auto_now=True, null=True)
 
+    class Meta:
+        ordering = ('-id',)
+
 
 class Classifier(models.Model):
     """Persisted classifier"""
     name = models.CharField(help_text='Name', max_length=255, blank=False, null=False)
     date_trained = models.DateTimeField(help_text='Date trained', auto_now_add=True, null=False)
     serialized = models.BinaryField(help_text='Pickle')
+
+    class Meta:
+        ordering = ('-id',)
 
 
 class ClassificationJob(models.Model):
@@ -46,6 +52,9 @@ class ClassificationJob(models.Model):
         self.date_ended = datetime.now()
         self.is_failed = True
 
+    class Meta:
+        ordering = ('-id',)
+
 
 class ClassificationResult(models.Model):
     """Path and classification job. If present it means that the
@@ -53,3 +62,6 @@ class ClassificationResult(models.Model):
     xpath = models.TextField(help_text='The xpath which contains a positive label')
     job = models.ForeignKey(to=ClassificationJob, help_text='The classification job this result corresponds to',
                             related_name='results', on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ('-id',)
