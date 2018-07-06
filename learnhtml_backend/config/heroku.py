@@ -20,6 +20,5 @@ class Heroku(Common):
         },
     }
 
-    CORS_ORIGIN_WHITELIST = (
-        values.URLValue('http://localhost:8000', environ_name='CORS_ORIGIN'),
-    )
+    CORS_ORIGIN_ALLOW_ALL = values.BooleanValue(False, environ_name='CORS_ORIGIN_ALLOW_ALL')
+    CORS_ORIGIN_WHITELIST = values.TupleValue(('http://localhost:8000',), environ_name='CORS_ORIGIN_WHITELIST')
