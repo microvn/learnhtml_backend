@@ -4,8 +4,8 @@ from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 
 from learnhtml_backend.classification.models import PageDownload, Classifier, ClassificationJob
-from learnhtml_backend.classification.serializers import PageListSerializer, PageDetailSerializer, ClassifierSerializer, \
-    JobDetailSerializer, JobListSerializer
+from learnhtml_backend.classification.serializers import PageListSerializer, PageDetailSerializer, \
+    JobDetailSerializer, JobListSerializer, ClassifierListSerializer, ClassifierDetailSerializer
 from learnhtml_backend.consts import CLASSIFY_TIMEOUT
 
 
@@ -26,7 +26,20 @@ class PageViewSet(viewsets.ReadOnlyModelViewSet):
 class ClassifierViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for classifiers, just for viewing."""
     queryset = Classifier.objects.all()
-    serializer_class = ClassifierSerializer
+
+    def get_serializer_class(self):
+        """Conditional serializer based on action"""
+        if self.action == 'list':
+            return ClassifierListSerializer
+        if self.action == 'retrieve':
+            return ClassifierDetailSerializer
+        return ClassifierListSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()  # base queryset
+        if self.action == 'list':
+            return queryset.defer('serialized')  # only as it consumes memory
+        return queryset
 
 
 class JobViewSet(mixins.ListModelMixin,

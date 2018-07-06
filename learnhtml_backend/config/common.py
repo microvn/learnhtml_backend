@@ -3,7 +3,7 @@ from distutils.util import strtobool
 from os.path import join
 
 import dj_database_url
-from configurations import Configuration
+from configurations import Configuration, values
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -55,7 +55,8 @@ class Common(Configuration):
     DATABASES = {
         'default': dj_database_url.config(
             default='postgres://user:pass@localhost:5432/user',
-            conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600))
+            conn_max_age=int(os.getenv('POSTGRES_CONN_MAX_AGE', 600)),
+            ssl_require=values.BooleanValue(False, environ_name='DATABASE_SSL')
         )
     }
 

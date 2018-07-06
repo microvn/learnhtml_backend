@@ -79,7 +79,7 @@ class JobDetailSerializer(serializers.ModelSerializer):
                   'date_started', 'date_ended')
 
 
-class ClassifierSerializer(serializers.ModelSerializer):
+class ClassifierDetailSerializer(serializers.ModelSerializer):
     """Serializer for classifiers"""
     params = serializers.SerializerMethodField()
 
@@ -91,3 +91,11 @@ class ClassifierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Classifier
         fields = ('id', 'name', 'date_trained', 'params')
+
+
+class ClassifierListSerializer(serializers.ModelSerializer):
+    """Serializer for classifiers"""
+
+    class Meta:
+        model = Classifier
+        fields = ('id', 'name', 'date_trained')
